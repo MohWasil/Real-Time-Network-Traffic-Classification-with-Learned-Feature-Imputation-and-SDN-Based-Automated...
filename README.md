@@ -76,3 +76,70 @@ The work demonstrates how flow-based deep learning models, trained on CICIDS2017
 ├── measure_models_latency.py 
 
 ├── README.md 
+
+----
+
+# 1. Ubuntu Backend Setup
+     ┌────────────────────────── Ubuntu VM (Backend) ───────────────────────┐
+     │                                                                      │
+     │   Mininet → Zeek → Step3/Step4 ML → Predictions.csv → FastAPI        │
+     │                                                                      │
+     │   ● Mininet (virtual network)                                        │
+     │   ● Zeek IDS capturing packets                                       │
+     │   ● Python feature extractor (Step3)                                 │
+     │   ● ML model inference (Step4)                                       │
+     │   ● predictions.csv (append-only log)                                │
+     │   ● FastAPI service exposes results to Windows                       │
+     │                                                                      │
+     └──────────────────────────────────────────────────────────────────────┘
+
+### Install Dependencies
+```bash
+sudo apt update
+sudo apt install -y python3 python3-venv python3-pip git mininet zeek
+```
+
+### Create environment:
+```bash
+python3 -m venv my_env
+source my_env/bin/activate
+pip install -r requirements.txt
+```
+
+### Mininet Topology (Simple 2 hosts → switch → controller)
+```bash
+sudo mn --topo single,2 --controller=remote,ip=127.0.0.1 --switch ovsk
+```
+
+### Start Zeek for Packet Capture
+
+Zeek cannot monitor multiple -i interfaces; use a bridge or single interface such as the switch port:
+``` bash
+sudo zeek -i s1-eth1
+```
+
+Zeek logs appear in:
+``` bash
+/usr/local/zeek/logs/current/
+```
+
+
+### Step4 Machine Learning Inference Script
+
+Your Step4 script:
+
+loads trained model
+
+processes features → predicts attack/benign
+
+appends results to:
+``` bash
+predictions.csv
+```
+This file is used by both FastAPI and the Windows dashboard.
+-----
+
+### FastAPI Backend Service (Ubuntu)
+``` bash
+uvicorn service:app --host 0.0.0.0 --port 8000
+```
