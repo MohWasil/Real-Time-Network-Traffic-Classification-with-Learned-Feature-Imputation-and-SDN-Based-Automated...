@@ -143,3 +143,167 @@ This file is used by both FastAPI and the Windows dashboard.
 ``` bash
 uvicorn service:app --host 0.0.0.0 --port 8000
 ```
+----
+
+# 2. Windows Host — Frontend & Model Serving
+
+This directory contains all components running on the Windows host responsible for:
+
+Serving the three deep-learning models using TensorFlow Serving (Docker)
+
+Providing a real-time monitoring dashboard using Gradio
+
+Receiving classification requests from the Ubuntu VM preprocessor
+
+Returning predictions (label + probability) to the Ubuntu SDN controller
+
+This part of the system completes the inference and monitoring stages of the real-time pipeline.
+
+### 1. Components Overview
+#### ✔ TensorFlow Serving (Docker)
+
+Hosts the three exported models:
+
+binary_classifier (CNN)
+
+attack_classifier (CNN)
+
+app_classifier (LSTM)
+
+Each model uses the SavedModel directory structure:
+```bash
+model_name/
+   └── 1/
+       └── saved_model.pb
+       └── variables/
+```
+
+#### ✔ Gradio Dashboard
+
+A lightweight monitoring UI that:
+
+* polls the Ubuntu FastAPI service (/latest)
+
+* updates a real-time table of flows
+
+* displays label, attack probability, and SDN action applied
+
+### 2. Directory Structure
+```bash
+windows/
+│
+├── tf_models/
+│   ├── binary_classifier/1/
+│   ├── attack_classifier/1/
+│   └── app_classifier/1/
+│
+├── models.config        
+├── dashboard.py         
+├── start_tf_serving.bat 
+
+```
+
+### 3. Requirements
+**Prerequisites**
+* Windows 10 Pro / 11 Pro
+* Docker Desktop installed and running
+* Python 3.10+
+* Stable LAN connection to the Ubuntu VM
+
+**Python dependencies**
+Install Gradio and utilities:
+```bash
+pip install -r requirements.txt
+```
+
+This installs:
+
+* gradio
+* requests
+* pandas
+* uvicorn (optional for local testing)
+
+### 4. Running TensorFlow Serving (Docker)
+
+Docker launch command:
+```bash
+docker run -p 8501:8501 -p 8500:8500 ^
+  -v %cd%/tf_models/binary_classifier:/models/binary ^
+  -v %cd%/tf_models/attack_classifier:/models/attack ^
+  -v %cd%/tf_models/app_classifier:/models/app ^
+  -v %cd%/models.config:/models/models.config ^
+  tensorflow/serving:latest ^
+  --model_config_file=/models/models.config
+```
+
+### 5. After Launching TF-Serving
+
+Verify that the models are running:
+
+Open browser:
+```bash
+http://localhost:8501/v1/models/binary
+http://localhost:8501/v1/models/attack
+http://localhost:8501/v1/models/app
+```
+
+You should see:
+```bash
+{"model_version_status":[{"version":"1","state":"AVAILABLE"}]}
+```
+
+### 6. Running the Gradio Dashboard
+
+Once TF-Serving and Ubuntu preprocessing are running:
+```bash
+python dashboard.py
+```
+
+The dashboard will:
+
+* auto-refresh using /latest endpoint from Ubuntu FastAPI
+* show table with:
+- timestamps
+- source/destination IP
+- predicted class
+- model probability
+- SDN action (allowed / paused / dropped)
+
+You can access the UI at:
+```bash
+http://127.0.0.1:7860/
+```
+
+### 7. Data Flow (Windows Perspective)
+```bash
+Ubuntu VM (Zeek + Preprocessing)
+          ↓
+REST Request
+          ↓
+TensorFlow Serving (Windows Docker)
+          ↓
+Prediction JSON (label + probability)
+          ↓
+Ubuntu SDN Controller (decision: allow / pause / drop)
+          ↓
+FastAPI (/latest)
+          ↓
+Gradio Dashboard (Windows)
+```
+
+### 8. Troubleshooting
+❗ TF-Serving cannot find model
+
+Check folder structure — must be:
+```bash
+model_name/1/saved_model.pb
+```
+❗ Ubuntu cannot reach TF-Serving
+
+* Ensure Windows firewall allows port 8501
+* Ensure both systems are on the same bridged network
+
+❗ Dashboard not updating
+
+* Check Ubuntu FastAPI is running
+* Check the IP in dashboard.py is correct
