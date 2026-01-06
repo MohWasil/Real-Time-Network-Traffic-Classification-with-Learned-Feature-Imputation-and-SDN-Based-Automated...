@@ -45,7 +45,7 @@ def build_vector77(flow, expected_features):
         "totallengthofbwdpackets": int(flow.get("resp_ip_bytes", 0)),
     }
 
-    # Fill Group A + NaNs for Group C
+    # Fill Group A + NaNs for Group B
     synth = fill_missing(flow)
     merged = {**base, **synth}
 
@@ -53,7 +53,7 @@ def build_vector77(flow, expected_features):
     raw_vec = np.array([merged.get(f, np.nan) for f in expected_features], dtype=float)
 
     # === Imputation ===
-    # Reshape: (1, 77, 1) → TSMixer expects 3D input
+    # Reshape: (1, 77, 1) → TSMixer 3D input
     inp = np.expand_dims(np.expand_dims(raw_vec, axis=0), axis=-1)
     imputed = imputer_model.predict(inp, verbose=0)
     imputed_vec = imputed[0, :, 0]  # back to (77,)
@@ -75,11 +75,11 @@ def post_tf(url, arr):
         r = requests.post(url, json=payload, timeout=3)
         js = r.json()
         if "predictions" not in js:
-            print("⚠️ Missing predictions field:", r.text)
+            print("Missing predictions field:", r.text)
             return {}
         return js
     except Exception as e:
-        print(f"⚠️ TF-Serving error: {e}")
+        print(f"TF-Serving error: {e}")
         return {}
 
 
@@ -106,7 +106,7 @@ def classify(flow):
     # --- Step A: Build + impute + scale 77 feats ---
     raw77 = build_vector77(flow, expected_features)
     scaled77 = scaler77.fit_transform([raw77])
-    scaled77 = np.expand_dims(scaled77, axis=-1)  # shape (1,77,1)
+    scaled77 = np.expand_dims(scaled77, axis=-1)  
 
     # --- Binary classification ---
     resp = post_tf(BIN_URL, scaled77)
@@ -149,7 +149,7 @@ def push_block(src_ip, dst_ip, duration=60):
         r = requests.post("http://127.0.0.1:8080/stats/flowentry/add", json=data)
         print("→ SDN rule installed:", r.status_code)
     except Exception as e:
-        print("⚠️ SDN push failed:", e)
+        print("SDN push failed:", e)
 
 
 # -------------------------------------------------
@@ -180,14 +180,14 @@ def follow_connlog(logfile):
                                 print(f"[{src}->{dst}] ATTACK ({lbl}) score={score:.2f}")
 
                                 if score >= TH_BIN:
-                                    print(f"⚠️ Would block flow {src}->{dst} (score {score:.2f})")
+                                    print(f"Would block flow {src}->{dst} (score {score:.2f})")
                                     # push_block(src, dst)
                             else:
                                 lbl = result.get("app_label", "?")
                                 print(f"[{src}->{dst}] NORMAL (App={lbl}) score={score:.2f}")
 
                         except Exception as e:
-                            print("⚠️ Parse/classify error:", e)
+                            print("Parse/classify error:", e)
                 last_size = size
             time.sleep(2)
         except KeyboardInterrupt:
@@ -200,4 +200,3 @@ def follow_connlog(logfile):
 # -------------------------------------------------
 if __name__ == "__main__":
     follow_connlog("conn.log")
-
