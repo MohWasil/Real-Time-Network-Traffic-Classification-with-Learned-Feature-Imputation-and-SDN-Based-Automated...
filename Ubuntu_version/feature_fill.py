@@ -58,7 +58,7 @@ def fill_missing(flow):
         "initwinbytesbackward": float(flow.get("resp_window", 0)),
     }
 
-    # --- Group C (requires ML imputation) ---
+    # --- Group B (requires ML imputation) ---
     # Fill with NaN as placeholders, model will overwrite
     group_c = [
         "fwdpacketlengthmax", "fwdpacketlengthmin", "fwdpacketlengthmean", "fwdpacketlengthstd",
