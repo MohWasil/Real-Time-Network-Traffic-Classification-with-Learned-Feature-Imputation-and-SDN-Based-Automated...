@@ -2,7 +2,7 @@ import numpy as np
 import json
 from sklearn.preprocessing import RobustScaler
 
-# --- your canonical features (copied from preprocessing code) ---
+# --- canonical features ---
 main_feature = [
     'destinationport', 'flowduration', 'totalfwdpackets',
     'totalbackwardpackets', 'totallengthoffwdpackets',
@@ -34,18 +34,19 @@ main_feature = [
 
 
 
-# --- Step 1: create dummy row (replace with CSV row if you want) ---
+# --- dummy row ---
 vector = np.arange(len(main_feature)).astype(float).reshape(1, -1)
 
-# --- Step 2: scale with RobustScaler ---
+# --- RobustScaler ---
 scaler = RobustScaler()
 scaled_vector = scaler.fit_transform(vector)
 
 print("Scaled vector shape:", scaled_vector.shape)
 
-# --- Step 3: save request.json for TF Serving ---
+# --- request.json for TF Serving ---
 request_data = {"instances": scaled_vector.tolist()}
 with open("./request.json", "w") as f:
     json.dump(request_data, f)
 
 print("Saved request.json, ready to send to TF Serving")
+
