@@ -8,4 +8,3 @@ def Model_convertor(model_path, path): # sending model and the path to save
 
 
 Model_convertor("./main_Models/Final-binary.h5", "./binary_classifier/binary_model/1")
-
