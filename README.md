@@ -1,6 +1,6 @@
 # Real-Time Network Traffic Classification with Learned Feature Imputation and SDN-Based Automated Response.
 
-This repository contains the full implementation of our **real-time machine learning–based intrusion detection and mitigation framework**.  
+This repository contains the full implementation of our **real-time Network traffic classification with learned feature imputation and SDN based automated response**.  
 The system integrates **Zeek** for live flow monitoring, **feature approximation and neural network imputation** to complete the CICFlowMeter 77-feature schema, **TensorFlow Serving** for classification, and the **Ryu SDN controller** for real-time enforcement.  
 A **Gradio-based dashboard** provides real-time monitoring of traffic classification outcomes.  
 
@@ -49,13 +49,11 @@ The work demonstrates how flow-based deep learning models, trained on CICIDS2017
 
 │ ├── models.config 
 
-│ ├── Dockerfile / scripts # Docker TF-Serving launch configs
-
 │
 
 ├── ubuntu/ 
 
-│ ├── preprocess.py # Main pipeline (Zeek → imputer → scaler → TF-Serving)
+│ ├── zeek_ids_orchestrator.py # Main pipeline (Zeek → imputer → scaler → TF-Serving)
 
 │ ├── feature_fill.py # Math-based feature approximation module
 
@@ -63,7 +61,7 @@ The work demonstrates how flow-based deep learning models, trained on CICIDS2017
 
 │ ├── scaler_pipeline.joblib
 
-│ ├── service.py # FastAPI server exposing /latest endpoint
+│ ├── fast_api.py # FastAPI server exposing /latest endpoint
 
 │ ├── ml_sdn_firewall.py 
 
