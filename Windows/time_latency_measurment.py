@@ -2,9 +2,8 @@ import requests
 import time
 import numpy as np
 
-# Same input as your curl
 data = {
-    "instances": [[[0.1],[0.2],[0.3]] + [[0.0]]*71]  # 3 + 71 = 74 features
+    "instances": [[[0.1],[0.2],[0.3]] + [[0.0]]*71]  
 }
 
 def time_model(url, name, runs=200):
@@ -22,4 +21,5 @@ def time_model(url, name, runs=200):
 
 time_model("http://localhost:8501/v1/models/binary_classifier:predict", "Binary")
 time_model("http://localhost:8501/v1/models/attack_classifier:predict", "Malicious")
+
 time_model("http://localhost:8501/v1/models/application_classifier:predict", "Application")
