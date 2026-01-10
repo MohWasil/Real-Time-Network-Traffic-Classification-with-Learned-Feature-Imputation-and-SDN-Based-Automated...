@@ -1,10 +1,16 @@
 # Real-Time Network Traffic Classification with Learned Feature Imputation and SDN-Based Automated Response.
 
-This repository contains the full implementation of our **real-time Network traffic classification with learned feature imputation and SDN based automated response**.  
-The system integrates **Zeek** for live flow monitoring, **feature approximation and neural network imputation** to complete the CICFlowMeter 77-feature schema, **TensorFlow Serving** for classification, and the **Ryu SDN controller** for real-time enforcement.  
-A **Gradio-based dashboard** provides real-time monitoring of traffic classification outcomes.  
+This repository provides the complete implementation of a **real-time network traffic classification framework** with learned **feature imputation and SDN-based automated response**. The system is designed to bridge the gap between production network monitoring tools and flow-based machine learning models that rely on richer feature representations.
 
-The work demonstrates how flow-based deep learning models, trained on CICIDS2017/2018, ToN-IoT, and application datasets, can be **deployed in a hybrid Windows–Ubuntu testbed** to classify network traffic and enforce security policies dynamically.
+The framework integrates **Zeek** for live network flow monitoring, a **neural feature imputation module** to approximate and reconstruct the full **CICFlowMeter 77-feature schema**, TensorFlow Serving for low-latency traffic classification, and the Ryu SDN controller for real-time policy enforcement in OpenFlow-enabled networks. A Gradio-based dashboard is included to support real-time visualization and operational monitoring of classification outcomes.
+
+The implementation demonstrates how flow-based deep learning models trained on **CICIDS2017/2018, ToN-IoT, and 75 app application traffic** datasets can be deployed in a hybrid Windows–Ubuntu testbed. The system enables dynamic traffic classification and confidence-aware security enforcement, providing a reproducible reference architecture for research and practical experimentation in **software-defined networking** and network security.
+
+
+## System Architecture
+![Diagram Description](https://github.com/user-attachments/assets/183be9e4-dafe-4a19-a78a-a73066436b37)
+
+---
 
 ---
 
