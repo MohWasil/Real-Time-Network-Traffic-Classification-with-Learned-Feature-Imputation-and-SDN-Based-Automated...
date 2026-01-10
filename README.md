@@ -14,67 +14,39 @@ The implementation demonstrates how flow-based deep learning models trained on *
 
 ---
 
-## 🔹 High-Level Architecture
-### project-root
+### 📂 Project Structure
 
-│
-
+```text
+.
 ├── notebooks/ 
-│ ├── binary_cnn_training.ipynb
-│ ├── attack_cnn_training.ipynb
-│ └── app_lstm_training.ipynb
-
-|
-
-├── main_Models
-│ ├── binary.keras
-│ ├── attack_type.keras
-│ └── app_type.keras
-|
-
+│   ├── binary_cnn_training.ipynb
+│   ├── attack_cnn_training.ipynb
+│   └── app_lstm_training.ipynb
+├── main_Models/
+│   ├── binary.keras
+│   ├── attack_type.keras
+│   └── app_type.keras
 ├── windows/ 
-
-│ ├── tf_models/ 
-
-│ │ ├── binary_classifier/1/
-
-│ │ ├── attack_classifier/1/
-
-│ │ └── app_classifier/1/
-
-│ │
-
-│ ├── dashboard.py # Gradio real-time monitoring UI
-
-│ ├── models.config 
-
-│
-
+│   ├── tf_models/ 
+│   │   ├── binary_classifier/1/
+│   │   ├── attack_classifier/1/
+│   │   └── app_classifier/1/
+│   ├── dashboard.py               # Gradio real-time monitoring UI
+│   └── models.config 
 ├── ubuntu/ 
-
-│ ├── zeek_ids_orchestrator.py # Main pipeline (Zeek → imputer → scaler → TF-Serving)
-
-│ ├── feature_fill.py # Math-based feature approximation module
-
-│ ├── imputers.pkl 
-
-│ ├── scaler_pipeline.joblib
-
-│ ├── fast_api.py # FastAPI server exposing /latest endpoint
-
-│ ├── internet_topo.py 
-
-│ ├── classified.csv
-
-│ ├── Log files
-
-│
-
+│   ├── zeek_ids_orchestrator.py    # Pipeline (Zeek → Imputer → Scaler → TF-Serving)
+│   ├── feature_fill.py            # Math-based feature approximation
+│   ├── imputers.pkl 
+│   ├── scaler_pipeline.joblib
+│   ├── fast_api.py                # FastAPI server
+│   ├── internet_topo.py 
+│   ├── classified.csv
+│   └── log_files/                 # Directory for logs
 ├── requirements.txt 
+├── measure_models_latency.py
+├── policy.md 
+└── README.md
 
-├── measure_models_latency.py 
-
-├── README.md 
 
 ----
 
