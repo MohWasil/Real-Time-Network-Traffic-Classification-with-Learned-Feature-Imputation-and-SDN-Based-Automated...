@@ -44,9 +44,8 @@ The implementation demonstrates how flow-based deep learning models trained on *
 │   └── log_files/                 # Directory for logs
 ├── requirements.txt 
 ├── measure_models_latency.py
-├── policy.md 
 └── README.md
-
+```
 
 ----
 
