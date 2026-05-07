@@ -38,6 +38,17 @@ def fill_missing(flow):
 
     # --- Group A (direct Zeek or simple math) ---
     feats = {
+        "fwdpacketss":        safe_div(f_pk, dur),
+        "bwdpacketss":        safe_div(b_pk, dur),
+        "packetlengthmean":   safe_div(tot_bt, tot_pk),
+        "fwdheaderlength":    f_pk * 20,   
+        "bwdheaderlength":    b_pk * 20,
+        "minpacketlength":    safe_div(min(f_bt, b_bt), max(f_pk, b_pk, 1)),
+        "maxpacketlength":    safe_div(max(f_bt, b_bt), 1),
+        "packetlengthstd":    abs(safe_div(f_bt,f_pk) - safe_div(b_bt,b_pk)),
+        "packetlengthvariance": (safe_div(f_bt,f_pk) - safe_div(b_bt,b_pk))**2,
+        "ackflagcount":       1 if b_pk > 0 else 0,
+        
         "destinationport": dst_p,
         "flowduration": dur,
         "totalfwdpackets": f_pk,
@@ -67,10 +78,8 @@ def fill_missing(flow):
         "fwdiattotal", "fwdiatmean", "fwdiatstd", "fwdiatmax", "fwdiatmin",
         "bwdiattotal", "bwdiatmean", "bwdiatstd", "bwdiatmax", "bwdiatmin",
         "fwdpshflags", "bwdpshflags", "fwdurgflags", "bwdurgflags",
-        "fwdheaderlength", "bwdheaderlength", "fwdpacketss", "bwdpacketss",
-        "minpacketlength", "maxpacketlength", "packetlengthmean", "packetlengthstd", "packetlengthvariance",
         "finflagcount", "synflagcount", "rstflagcount", "pshflagcount",
-        "ackflagcount", "urgflagcount", "cweflagcount", "eceflagcount",
+        "urgflagcount", "cweflagcount", "eceflagcount",
         "fwdavgbytesbulk", "fwdavgpacketsbulk", "fwdavgbulkrate",
         "bwdavgbytesbulk", "bwdavgpacketsbulk", "bwdavgbulkrate",
         "actdatapktfwd", "minsegsizemin",
